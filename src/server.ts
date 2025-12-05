@@ -58,6 +58,7 @@ app.get('/', (req:Request, res:Response) => {
   res.send('Welcome to Assignment 2!! - Vehicle Rental System API is running..')
 });
 // users crud
+// post
 app.post("/api/v1/users", async (req:Request, res:Response)=>{
     const {name, email, password, phone,role} = req.body;
 
@@ -112,6 +113,62 @@ app.get("/api/v1/users/:id", async(req: Request, res: Response)=>{
      success: true,
      message: "User fetched successfully",
      data: result.rows[0]
+   });
+  } catch (err: any){
+   res.status(500).json({
+    success: false,
+    message: err.message
+   }) ;
+  }
+});
+
+//update
+app.put("/api/v1/users/:id", async(req: Request, res: Response)=>{
+  const {id} = req.params;
+  const {name, email, password, phone, role} = req.body;
+
+  try{
+   const result = await pool.query(`UPDATE users SET name = $1, email = $2, password = $3, phone = $4, role = $5 WHERE id = $6 RETURNING *`,[name,email,password,phone,role,id]
+   );
+
+   if (result.rows.length === 0){
+    return res.status(404).json({
+      success: false,
+      message: "User not found"
+    });
+   }
+
+   res.status(200).json({
+     success: true,
+     message: "User updated successfully",
+     data: result.rows[0]
+   });
+  } catch (err: any){
+   res.status(500).json({
+    success: false,
+    message: err.message
+   }) ;
+  }
+});
+
+//delete
+app.delete("/api/v1/users/:id", async(req: Request, res: Response)=>{
+  const {id} = req.params;
+
+  try{
+   const result = await pool.query(`DELETE FROM users WHERE id = $1 RETURNING *`,[id]);
+//user jodi na pai..
+   if (result.rows.length === 0){
+    return res.status(404).json({
+      success: false,
+      message: "User not found"
+    });
+   }
+
+   res.status(200).json({
+     success: true,
+     message: "User deleted successfully",
+     data: result.rows[0],
    });
   } catch (err: any){
    res.status(500).json({
