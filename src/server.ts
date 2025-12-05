@@ -76,6 +76,51 @@ app.post("/api/v1/users", async (req:Request, res:Response)=>{
     }
 });
 
+//get
+app.get("/api/v1/users", async (req:Request, res:Response)=>{
+  try{
+    const result = await  pool.query(`SELECT * FROM users`);
+
+    res.status(200).json({
+      success: true,
+      message: "All users fetched successfully",
+      data: result.rows
+    })
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+});
+
+//get single user by id
+app.get("/api/v1/users/:id", async(req: Request, res: Response)=>{
+  const {id} = req.params;
+
+  try{
+   const result = await pool.query(`SELECT * FROM users WHERE id = $1`,[id]);
+
+   if (result.rows.length === 0){
+    return res.status(404).json({
+      success: false,
+      message: "User not found"
+    });
+   }
+
+   res.status(200).json({
+     success: true,
+     message: "User fetched successfully",
+     data: result.rows[0]
+   });
+  } catch (err: any){
+   res.status(500).json({
+    success: false,
+    message: err.message
+   }) ;
+  }
+});
+
 app.listen(process.env.PORT, () => {
   console.log(`Vehicle Rental System Server listening on port ${process.env.PORT}`);
 })
