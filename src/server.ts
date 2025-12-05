@@ -1,9 +1,13 @@
 import express, { Request, Response } from "express";
+import dotenv from "dotenv"
 import {Pool} from "pg";
+
+dotenv.config();
 const app = express();
-const port = 5000;
 
-
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
 app.use(express.json());
 
@@ -20,6 +24,6 @@ app.post("/",(req:Request, res:Response)=>{
     });
 });
 
-app.listen(port, () => {
-  console.log(`Vehicle Rental System Server listening on port ${port}`)
+app.listen(process.env.PORT, () => {
+  console.log(`Vehicle Rental System Server listening on port ${process.env.PORT}`);
 })
