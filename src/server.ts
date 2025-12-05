@@ -1,15 +1,16 @@
 import express, { Request, Response } from "express";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
+import path from "path";
 import {Pool} from "pg";
 
-dotenv.config();
+dotenv.config({path: path.join(process.cwd(), ".env")});
 const app = express();
 
 app.use(express.json());
 
 //DB
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: `${process.env.DATABASE_URL}`,
 });
 
 const initDB = async () => {
@@ -56,14 +57,23 @@ initDB();
 app.get('/', (req:Request, res:Response) => {
   res.send('Welcome to Assignment 2!! - Vehicle Rental System API is running..')
 });
+// users crud
+app.post("/api/v1/users", async (req:Request, res:Response)=>{
+    const {name, email, password, phone,role} = req.body;
 
-app.post("/",(req:Request, res:Response)=>{
-    console.log(req.body);
-
-    res.status(201).json({
-        success:true,
-        message: "API is working",
-    });
+    try{
+    const result = await pool.query(`INSERT INTO users(name, email, password, phone,role) VALUES($1, $2, $3, $4, $5) RETURNING *`,[name, email, password, phone,role]);
+     res.status(201).json({
+        success: true,
+        message: "Data Inserted succesfully",
+        data: result.rows[0]
+      })
+    } catch (err: any) {
+      res.status(500).json({
+        success: false,
+        message: err.message
+      })
+    }
 });
 
 app.listen(process.env.PORT, () => {
