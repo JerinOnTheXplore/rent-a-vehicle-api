@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import path from "path";
 import {Pool} from "pg";
@@ -54,7 +54,13 @@ const initDB = async () => {
 
 initDB();
 
-app.get('/', (req:Request, res:Response) => {
+//logger middleware
+const logger = (req:Request, res:Response, next:NextFunction)=>{
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}\n`);
+  next();
+}
+
+app.get('/',logger, (req:Request, res:Response) => {
   res.send('Welcome to Assignment 2!! - Vehicle Rental System API is running..')
 });
 // users crud
@@ -450,6 +456,14 @@ app.delete("/api/v1/bookings/:bookingId", async(req: Request, res: Response)=>{
     message: err.message
    }) ;
   }
+});
+
+app.use((req,res)=>{
+  res.status(404).json({
+    success: false,
+    message: "Route not found",
+    path: req.path,
+  });
 });
 
 app.listen(process.env.PORT, () => {
