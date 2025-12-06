@@ -4,6 +4,7 @@ import config from "./config";
 import initDB, { pool } from "./config/db";
 import logger from "./middleware/logger";
 import { userRoutes } from "./modules/user/user.routes";
+import { vehicleRoutes } from "./modules/vehicles/vehicle.routes";
 const app = express();
 const port = config.port;
 
@@ -18,131 +19,12 @@ app.get('/',logger, (req:Request, res:Response) => {
 // users crud
 // post
 app.use("/api/v1/users",userRoutes);
+//vehicles CRUD
+app.use("/api/v1/vehicles",vehicleRoutes);
 
 
 // //delete
-// app.delete("/api/v1/users/:userId", );
-
-//vehicles CRUD
-//POST
-app.post("/api/v1/vehicles", async (req:Request, res:Response)=>{
-    const {vehicle_name, type, registration_number, daily_rent_price, availability_status} = req.body;
-
-    try{
-    const result = await pool.query(`INSERT INTO vehicles(vehicle_name, type, registration_number, daily_rent_price, availability_status) VALUES($1, $2, $3, $4, $5) RETURNING *`,[vehicle_name, type, registration_number, daily_rent_price, availability_status]);
-     res.status(201).json({
-        success: true,
-        message: "Vehicle added succesfully",
-        data: result.rows[0]
-      })
-    } catch (err: any) {
-      res.status(500).json({
-        success: false,
-        message: err.message
-      })
-    }
-});
-
-//GET
-app.get("/api/v1/vehicles", async (req:Request, res:Response)=>{
-  try{
-    const result = await  pool.query(`SELECT * FROM vehicles`);
-
-    res.status(200).json({
-      success: true,
-      message: "All vehicles fetched successfully",
-      data: result.rows
-    })
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message
-    });
-  }
-});
-
-//get single vehicle
-app.get("/api/v1/vehicles/:vehicleId", async(req: Request, res: Response)=>{
-  const {vehicleId} = req.params;
-
-  try{
-   const result = await pool.query(`SELECT * FROM vehicles WHERE id = $1`,[vehicleId]);
-
-   if (result.rows.length === 0){
-    return res.status(404).json({
-      success: false,
-      message: "Vehicle not found"
-    });
-   }
-
-   res.status(200).json({
-     success: true,
-     message: "Vehicle fetched successfully",
-     data: result.rows[0]
-   });
-  } catch (err: any){
-   res.status(500).json({
-    success: false,
-    message: err.message
-   }) ;
-  }
-});
-
-//update vehicle
-app.put("/api/v1/vehicles/:vehicleId", async(req: Request, res: Response)=>{
-  const {vehicleId	} = req.params;
-  const {vehicle_name, type, registration_number, daily_rent_price, availability_status} = req.body;
-
-  try{
-   const result = await pool.query(`UPDATE vehicles SET vehicle_name = $1, type = $2, registration_number = $3, daily_rent_price = $4, availability_status = $5 WHERE id = $6 RETURNING *`,[vehicle_name, type, registration_number, daily_rent_price, availability_status,vehicleId]
-   );
-
-   if (result.rows.length === 0){
-    return res.status(404).json({
-      success: false,
-      message: "Vehicle not found"
-    });
-   }
-
-   res.status(200).json({
-     success: true,
-     message: "Vehicle updated successfully",
-     data: result.rows[0]
-   });
-  } catch (err: any){
-   res.status(500).json({
-    success: false,
-    message: err.message
-   }) ;
-  }
-});
-
-//delete
-app.delete("/api/v1/vehicles/:vehicleId", async(req: Request, res: Response)=>{
-  const {vehicleId	} = req.params;
-
-  try{
-   const result = await pool.query(`DELETE FROM vehicles WHERE id = $1 RETURNING *`,[vehicleId]);
-//user jodi na pai..
-   if (result.rows.length === 0){
-    return res.status(404).json({
-      success: false,
-      message: "Vehicle not found"
-    });
-   }
-
-   res.status(200).json({
-     success: true,
-     message: "Vehicles deleted successfully",
-     data: result.rows[0],
-   });
-  } catch (err: any){
-   res.status(500).json({
-    success: false,
-    message: err.message
-   }) ;
-  }
-});
+// app.delete("/api/v1/vehicles/:vehicleId", );
 
 //bookings crud
 //POST
