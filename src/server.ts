@@ -3,6 +3,7 @@ import {Pool} from "pg";
 import config from "./config";
 import initDB, { pool } from "./config/db";
 import logger from "./middleware/logger";
+import { userRoutes } from "./modules/user/user.routes";
 const app = express();
 const port = config.port;
 
@@ -16,124 +17,11 @@ app.get('/',logger, (req:Request, res:Response) => {
 });
 // users crud
 // post
-app.post("/api/v1/users", async (req:Request, res:Response)=>{
-    const {name, email, password, phone,role} = req.body;
+app.use("/api/v1/users",userRoutes);
 
-    try{
-    const result = await pool.query(`INSERT INTO users(name, email, password, phone,role) VALUES($1, $2, $3, $4, $5) RETURNING *`,[name, email, password, phone,role]);
-     res.status(201).json({
-        success: true,
-        message: "Data Inserted succesfully",
-        data: result.rows[0]
-      })
-    } catch (err: any) {
-      res.status(500).json({
-        success: false,
-        message: err.message
-      })
-    }
-});
 
-//get
-app.get("/api/v1/users", async (req:Request, res:Response)=>{
-  try{
-    const result = await  pool.query(`SELECT * FROM users`);
-
-    res.status(200).json({
-      success: true,
-      message: "All users fetched successfully",
-      data: result.rows
-    })
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message
-    });
-  }
-});
-
-//get single user by id
-app.get("/api/v1/users/:userId", async(req: Request, res: Response)=>{
-  const {userId} = req.params;
-
-  try{
-   const result = await pool.query(`SELECT * FROM users WHERE id = $1`,[userId]);
-
-   if (result.rows.length === 0){
-    return res.status(404).json({
-      success: false,
-      message: "User not found"
-    });
-   }
-
-   res.status(200).json({
-     success: true,
-     message: "User fetched successfully",
-     data: result.rows[0]
-   });
-  } catch (err: any){
-   res.status(500).json({
-    success: false,
-    message: err.message
-   }) ;
-  }
-});
-
-//update
-app.put("/api/v1/users/:userId", async(req: Request, res: Response)=>{
-  const {userId} = req.params;
-  const {name, email, password, phone, role} = req.body;
-
-  try{
-   const result = await pool.query(`UPDATE users SET name = $1, email = $2, password = $3, phone = $4, role = $5 WHERE id = $6 RETURNING *`,[name,email,password,phone,role,userId]
-   );
-
-   if (result.rows.length === 0){
-    return res.status(404).json({
-      success: false,
-      message: "User not found"
-    });
-   }
-
-   res.status(200).json({
-     success: true,
-     message: "User updated successfully",
-     data: result.rows[0]
-   });
-  } catch (err: any){
-   res.status(500).json({
-    success: false,
-    message: err.message
-   }) ;
-  }
-});
-
-//delete
-app.delete("/api/v1/users/:userId", async(req: Request, res: Response)=>{
-  const {userId} = req.params;
-
-  try{
-   const result = await pool.query(`DELETE FROM users WHERE id = $1 RETURNING *`,[userId]);
-//user jodi na pai..
-   if (result.rows.length === 0){
-    return res.status(404).json({
-      success: false,
-      message: "User not found"
-    });
-   }
-
-   res.status(200).json({
-     success: true,
-     message: "User deleted successfully",
-     data: result.rows[0],
-   });
-  } catch (err: any){
-   res.status(500).json({
-    success: false,
-    message: err.message
-   }) ;
-  }
-});
+// //delete
+// app.delete("/api/v1/users/:userId", );
 
 //vehicles CRUD
 //POST
