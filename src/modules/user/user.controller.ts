@@ -26,7 +26,7 @@ const getUser = async (req:Request, res:Response)=>{
 
     res.status(200).json({
       success: true,
-      message: "All users fetched successfully",
+      message: "Users retrieved successfully",
       data: result.rows
     })
   } catch (err: any) {
@@ -51,7 +51,7 @@ const getSingleUser = async(req: Request, res: Response)=>{
 
    res.status(200).json({
      success: true,
-     message: "User fetched successfully",
+     message: "User retrieved successfully",
      data: result.rows[0]
    });
   } catch (err: any){

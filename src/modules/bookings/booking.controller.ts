@@ -48,7 +48,7 @@ const getBooking = async (req:Request, res:Response)=>{
 
     res.status(200).json({
       success: true,
-      message: "All bookings retrieved successfully",
+      message: "Your bookings retrieved successfully",
       data
     })
   } catch (err: any) {
