@@ -1,4 +1,4 @@
-# 🚗 Vehicle Rental System – Backend API
+# 🚗 RENT A VEHICLE API
 
 A backend REST API for managing a Vehicle Rental System.  
 This project supports vehicle management, user authentication, bookings, and role-based access control using JWT.
