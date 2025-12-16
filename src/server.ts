@@ -26,7 +26,7 @@ app.use("/api/v1/vehicles",vehicleRoutes);
 app.use("/api/v1/bookings",bookingRoutes);
 
 //auth route
-app.use("/auth", authRoutes);
+app.use("/api/v1/auth", authRoutes);
 
 app.use((req,res)=>{
   res.status(404).json({

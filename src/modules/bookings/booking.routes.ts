@@ -1,9 +1,11 @@
 import express , { Request, Response }  from "express";
 import { bookingControllers } from "./booking.controller";
+import { verifyToken } from "../../middleware/auth.middleware";
+import { authorize } from "../../middleware/role.middleware";
 
 const router = express.Router();
 
-router.post("/",bookingControllers.createBooking);
+router.post("/",verifyToken, authorize("admin", "customer"),bookingControllers.createBooking);
 
 router.get("/",bookingControllers.getBooking);
 

@@ -63,6 +63,7 @@ const signin = async (req: Request, res: Response)=>{
            process.env.JWT_SECRET as string,
            { expiresIn: "7d" }  
         );
+        console.log(token)
         res.status(200).json({
            success: true,
            message: "Login successful",
